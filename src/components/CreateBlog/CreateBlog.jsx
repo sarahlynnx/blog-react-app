@@ -18,7 +18,6 @@ function NewBlogPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Replace 'YOUR_API_URL' with the actual URL of your API endpoint
     const apiUrl = getApiUrl('api/blogs');
 
     try {
