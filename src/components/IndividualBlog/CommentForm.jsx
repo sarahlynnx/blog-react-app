@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
 
-const CommentForm = ({ onAddComment }) => {
+const CommentForm = () => {
     const [comment, setComment] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onAddComment({ comment });
-        setComment('');
+        try {
+            const response = await fetch('/api/comments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: commentContent }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to submit comment');
+            }
+            console.log('Comment submitted successfully');
+            setComment('');
+        } catch (error) {
+            console.error('Error submitting comment:', error.message);
+        }
     };
+
 
     return (
             <div className='comment-form'>

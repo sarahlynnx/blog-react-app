@@ -19,7 +19,7 @@ const LoginSignup = () => {
         };
 
         try {
-            const response = await fetch(getApiUrl('login'), {
+            const response = await fetch(getApiUrl('/api/auth/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,12 +48,12 @@ const LoginSignup = () => {
         };
 
         try {
-            const response = await fetch(getApiUrl('signup'), {
+            const response = await fetch(getApiUrl('/api/auth/register'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                ody: JSON.stringify(formData),
+                body: JSON.stringify(formData),
             });
             console.log(response);
             if (!response.ok) {
