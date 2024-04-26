@@ -36,6 +36,8 @@ const LoginSignup = () => {
         navigate('/');
     } catch (error) {
         console.error('Login failed: ', error.message);
+        alert('An error occurred while logging in. Please try again later.');
+
     }
 };
 
@@ -66,6 +68,8 @@ const LoginSignup = () => {
             navigate('/');
         } catch (error) {
             console.error('Signup failed: ', error.message);
+            alert('An error occurred while signing up. Please try again later.');
+
         }
     };
 

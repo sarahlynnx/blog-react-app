@@ -1,8 +1,10 @@
 import React from 'react';
 
-const BlogContent = ({ title, content, images }) => {
+const BlogContent = ({ author, date, title, content, images }) => {
     return (
         <div className='blog-content'>
+            <p>{author}</p>
+            <p>{date}</p>
             <h1>{title}</h1>
             <p>{content}</p>
 

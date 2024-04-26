@@ -1,28 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 
-const CommentsSection = () => {
+const CommentsSection = ({ comments }) => {
     const [comments, setComments] = useState([]);
-
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const response = await fetch(`/api/posts/${postId}/comments`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch comments');
-                }
-                const data = await response.json();
-                setComments(data);
-            } catch (error) {
-                console.error('Error fetching comments:', error);
-            }
-        };
-        fetchComments();
-    }, []);
 
     const handleDelete = async (commentId) => {
         try {
@@ -38,6 +17,7 @@ const CommentsSection = () => {
             setComments(comments => comments.filter(comment => comment._id !== commentId));
         } catch (error) {
             console.error('Error deleting comment:', error);
+            alert('An error occurred while deleting the comment. Please try again.');
         }
     };
 
@@ -53,14 +33,18 @@ const CommentsSection = () => {
             if (!response.ok) {
                 throw new Error('Failed to update comment');
             }
-            setComments(comments => comments.map(comment => {
-                if (comment._id === commentId) {
-                    return {...comment, content: updatedContent}
-                }
-                return comment;
-            }));
+
+            const updatedCommentIndex = comments.findIndex(comment => comment._id === commentId);
+            if (updatedCommentIndex === -1) {
+                throw new Error('Comment not found');
+            }
+            const updatedComments = [...comments];
+            updatedComments[updatedCommentIndex] = {...updatedComments[updatedCommentIndex], content: updatedContent};
+
+            setComments(updatedComments);
         } catch (error) {
             console.error('Error updating comment:', error);
+            alert('An error occurred while updating the comment. Please try again.');
         }
     };
 

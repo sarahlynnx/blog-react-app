@@ -20,6 +20,7 @@ const CommentForm = () => {
             setComment('');
         } catch (error) {
             console.error('Error submitting comment:', error.message);
+            alert('An error occurred while submitting the comment. Please try again.');
         }
     };
 
