@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import './CreateBlog.css';
-import ReactMarkdown from 'react-markdown';
-import { getApiUrl } from '../api';
+import React, { useState } from "react";
+import "./CreateBlog.css";
+import ReactMarkdown from "react-markdown";
+import { getApiUrl } from "../api";
 
-function NewBlogPage() {
+const CreateBlog = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [images, setImages] = useState([]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -15,52 +16,95 @@ function NewBlogPage() {
     setContent(e.target.value);
   };
 
+  const handleImageChange = (e) => {
+    setImages(Array.from(e.target.files));
+  };  
+
+  const markdownContent = `
+  # ${title}
+
+  ${images.map(file => `![${file.name}](${URL.createObjectURL(file)})`).join("\n")}
+
+  ${content}
+  `;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const apiUrl = getApiUrl('api/blogs');
-
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    images.forEach((image, index) => formData.append(`images[${index}]`, image, image.name));
+    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
+      const response = await fetch(getApiUrl('/api/posts'), {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ title, content, images }),
       });
 
       if (response.ok) {
-        console.log('Blog created successfully!');
+        console.log("Blog created successfully!");
+        alert("Blog created successfully!");
+        setTitle("");
+        setContent("");
+        setImages([]);
       } else {
-        console.error('Failed to create blog:', response.status, response.statusText);
-        const errorResponse = await response.json();
-        console.error('Error details:', errorResponse);
+        throw new Error("Error creating blog");
       }
     } catch (error) {
-      console.error('Error creating blog:', error.message);
+      console.error("Error creating blog:", error.message);
+      alert("An error occurred while creating the blog. Please try again.");
     }
   };
 
   return (
-    <div className='create-blog'>
+    <div className="create-blog">
       <h2>Create New Blog</h2>
-      <form className='create-blog-form' onSubmit={handleSubmit}>
-        <label htmlFor='title'>
-          Title 
-          <input id='title' placeholder='Enter a title' type='text' value={title} onChange={handleTitleChange} />
+      <form className="create-blog-form" onSubmit={handleSubmit}>
+        <label htmlFor="title">
+          Title
+          <input
+            id="title"
+            placeholder="Enter a title"
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+          />
         </label>
-        <label htmlFor='content'>
-          Content (Markdown)
-          <textarea id='content' className='create-blog-textarea' placeholder='Enter blog content' value={content} onChange={handleContentChange} />
+        <label htmlFor="content">
+          Content
+          <textarea
+            id="content"
+            className="create-blog-textarea"
+            placeholder="Enter blog content"
+            value={content}
+            onChange={handleContentChange}
+          />
         </label>
-        <button className='create-blog-btn' type="submit">Submit Blog</button>
+        <label htmlFor="image-upload">
+          Upload Images
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+          />
+        </label>
+
+        <button className="create-blog-btn" type="submit">
+          Submit Blog
+        </button>
       </form>
       <div>
         <h3>Preview</h3>
-        <ReactMarkdown className='create-blog-preview'>{content}</ReactMarkdown>
+        <ReactMarkdown className="create-blog-preview">{markdownContent}</ReactMarkdown>
       </div>
     </div>
   );
-}
+};
 
-export default NewBlogPage;
+export default CreateBlog;

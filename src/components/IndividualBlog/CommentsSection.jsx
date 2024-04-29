@@ -1,66 +1,53 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
+import { UserContext } from '../userContext';
 
-const CommentsSection = ({ comments }) => {
-    const [comments, setComments] = useState([]);
+const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
+    const {currentUser} = useContext(UserContext);
+    const [commentId, setCommentId] = useState(null);
+    const [commentContent, setCommentContent] = useState('');
 
-    const handleDelete = async (commentId) => {
-        try {
-            const response = await fetch(`/api/comments/${commentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete comment');
-            }
-            setComments(comments => comments.filter(comment => comment._id !== commentId));
-        } catch (error) {
-            console.error('Error deleting comment:', error);
-            alert('An error occurred while deleting the comment. Please try again.');
-        }
+    const beginEdit = (comment) => {
+        setCommentId(comment._id);
+        setCommentContent(comment.content);
     };
 
-    const handleEdit = async (commentId, updatedContent) => {
-        try {
-            const response = await fetch(`/api/comments/${commentId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ content: updatedContent}),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update comment');
-            }
-
-            const updatedCommentIndex = comments.findIndex(comment => comment._id === commentId);
-            if (updatedCommentIndex === -1) {
-                throw new Error('Comment not found');
-            }
-            const updatedComments = [...comments];
-            updatedComments[updatedCommentIndex] = {...updatedComments[updatedCommentIndex], content: updatedContent};
-
-            setComments(updatedComments);
-        } catch (error) {
-            console.error('Error updating comment:', error);
-            alert('An error occurred while updating the comment. Please try again.');
-        }
+    const cancelEdit = () => {
+        setCommentContent('');
+        setCommentId(null);
     };
 
+    const saveEdit = (commentId) => {
+        handleEdit(commentId, commentContent);
+        cancelEdit();
+    }
     return (
         <div className='comments-section'>
             <h2>Comments</h2>
             <ul>
                 {comments.map((comment, index) => (
                     <li key={index}>
-                        {comment.content}
-                        {comment.userId === currentUser.id && (
+                        {commentId === comment._id ? (
                             <>
-                                <button onClick={() => handleEdit(comment._id)}>Edit</button>
+                            <input
+                                type='text'
+                                value={commentContent}
+                                onChange={(e) => setCommentContent(e.target.value)}
+                            />
+                            <button onClick={cancelEdit}>Cancel</button>
+                            <button onClick={() => saveEdit(comment._id)}>Save</button>
+                            </>
+                        ) : (
+                            <>
+                            {comment.content}
+                            {comment.author === currentUser._id && (
+                            <>
+                                <button onClick={() => beginEdit(comment)}>Edit</button>
                                 <button onClick={() => handleDelete(comment._id)}>Delete</button>
                             </>
+                            )}
+                            </>
                         )}
+                        
                     </li>
                 ))}
             </ul>

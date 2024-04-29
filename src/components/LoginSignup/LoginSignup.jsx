@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { getApiUrl } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../userContext';
 import './loginsignup.css';
 
 import user_icon from '../Assets/user.png';
@@ -8,6 +9,7 @@ import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/password.png';
 
 const LoginSignup = () => {
+    const {login} = useContext(UserContext);
     const navigate = useNavigate();
     const [action, setAction] = useState('Login');
 
@@ -32,6 +34,9 @@ const LoginSignup = () => {
                 console.error('Login failed: ', errorData.message);
                 return;
         }
+        const {user, token} = await response.json();
+        login(user);
+        localStorage.setItem('token', token); 
         console.log('Login successful!');
         navigate('/');
     } catch (error) {

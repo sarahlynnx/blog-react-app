@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
+import { getApiUrl } from '../api';
 
 const CommentForm = () => {
     const [comment, setComment] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
         try {
-            const response = await fetch('/api/comments', {
+            const response = await fetch(getApiUrl('/api/comments'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: commentContent }),
+                body: JSON.stringify({ content: comment }),
             });
             if (!response.ok) {
                 throw new Error('Failed to submit comment');

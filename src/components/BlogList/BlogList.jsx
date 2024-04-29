@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './bloglist.css';
+import { getApiUrl } from '../api';
 
 const BlogList = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ const BlogList = () => {
     useEffect(() => {
         const fetchPosts = async () => {
         try {
-            const response = await fetch('/api/posts', {
+            const response = await fetch(getApiUrl('/api/posts'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
