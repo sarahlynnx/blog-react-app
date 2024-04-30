@@ -61,14 +61,15 @@ const BlogList = () => {
                                 <Row className='blog-row' >
                                     <Col sm className='p-2'>
                                         <div className='blog-img'>
-                                            <img src={blog.img} alt={`Thumbnail for ${blog.title} Blog`} />
+                                            <img src={blog.images[0]} alt={`Thumbnail for ${blog.title} Blog`} />
                                         </div>
                                     </Col>
                                     <Col sm className='p-2'> 
                                         <div className='blog-info'>
-                                            <p className='blog-author-date'>{blog.author} {blog.date}</p>
+                                            <p className='blog-author-date'>{blog.author.name}</p>
+                                            <p className='blog-author-date'>{blog.date}</p>
                                             <h2>{blog.title}</h2>
-                                            <p>{blog.body}</p>
+                                            <p>{blog.content}</p>
                                         </div>
                                     </Col>
                                 </Row>
