@@ -57,7 +57,7 @@ const BlogList = () => {
                 </div>
                 <div className='blog-preview'>
                         {blogs.map((blog) => (
-                            <Link className='ind-blog-link' to={`/blog/${blog.id}`} key={blog.id}>
+                            <Link className='ind-blog-link' to={`/blog/${blog._id}`} key={blog._id}>
                                 <Row className='blog-row' >
                                     <Col sm className='p-2'>
                                         <div className='blog-img'>

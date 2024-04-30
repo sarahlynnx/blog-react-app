@@ -18,7 +18,7 @@ const Blog = () => {
         views: 0,
         author: '',
         date: '',
-        comments: '',
+        comments: [],
     });
 
     const handleLike = async () => {
