@@ -30,19 +30,21 @@ const CreateBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
-    images.forEach((image, index) => formData.append(`images[${index}]`, image, image.name));
+    images.forEach((image, index) => 
+      formData.append('images', image));
     const token = localStorage.getItem("token");
+
     try {
       const response = await fetch(getApiUrl('/api/posts'), {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, content, images }),
+        body: formData,
       });
 
       if (response.ok) {
@@ -63,7 +65,7 @@ const CreateBlog = () => {
   return (
     <div className="create-blog">
       <h2>Create New Blog</h2>
-      <form className="create-blog-form" onSubmit={handleSubmit}>
+      <form className="create-blog-form" onSubmit={handleSubmit} method="post" enctype="multipart/form-data">
         <label htmlFor="title">
           Title
           <input

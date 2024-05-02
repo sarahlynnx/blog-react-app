@@ -1,10 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Interactions = ({ views, likes, onLike, onView }) => {
-    // useEffect(() => {
-    //     onView();
-    // }, []);
+const Interactions = ({ views, likes, onLike }) => {
     
     return (
         <div className='interactions'>

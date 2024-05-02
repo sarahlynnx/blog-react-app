@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './bloglist.css';
 import { getApiUrl } from '../api';
+import { formatDate } from '../DateFormat';
 
 const BlogList = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const BlogList = () => {
                 throw new Error('Failed to fetch posts');
             }
             const data = await response.json();
-            setBlogs((prevBlogs) => [...prevBlogs, ...data]);
+            setBlogs(data);
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
@@ -67,7 +68,7 @@ const BlogList = () => {
                                     <Col sm className='p-2'> 
                                         <div className='blog-info'>
                                             <p className='blog-author-date'>{blog.author.name}</p>
-                                            <p className='blog-author-date'>{blog.date}</p>
+                                            <p className='blog-author-date'>{formatDate(blog.date)}</p>
                                             <h2>{blog.title}</h2>
                                             <p>{blog.content}</p>
                                         </div>

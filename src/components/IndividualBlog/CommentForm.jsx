@@ -1,32 +1,6 @@
-import React, { useState } from 'react';
-import { getApiUrl } from '../api';
+import React from 'react';
 
-const CommentForm = () => {
-    const [comment, setComment] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(getApiUrl('/api/comments'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ content: comment }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to submit comment');
-            }
-            console.log('Comment submitted successfully');
-            setComment('');
-        } catch (error) {
-            console.error('Error submitting comment:', error.message);
-            alert('An error occurred while submitting the comment. Please try again.');
-        }
-    };
-
+const CommentForm = ({handleSubmit, comment, setComment}) => {
 
     return (
             <div className='comment-form'>
