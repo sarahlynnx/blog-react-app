@@ -9,7 +9,8 @@ import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/password.png';
 
 const LoginSignup = () => {
-    const {login} = useContext(UserContext);
+    const { login } = useContext(UserContext);
+
     const navigate = useNavigate();
     const [action, setAction] = useState('Login');
 
@@ -44,7 +45,7 @@ const LoginSignup = () => {
         alert('An error occurred while logging in. Please try again later.');
 
     }
-};
+    };
 
     const handleSignupSubmit = async (e) => {
         e.preventDefault();
