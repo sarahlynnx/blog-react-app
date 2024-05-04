@@ -125,26 +125,33 @@ const Blog = () => {
             console.log(`Component mounted or id changed: ${id}`);
             try {
                 console.log(`Fetching post data for ID: ${id}`);
-                const response = await fetch(getApiUrl(`/api/posts/${id}`), {
+                const getPostsResponse = await fetch(getApiUrl(`/api/posts/${id}`), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch post');
+                let getCommentsResponse = await fetch(getApiUrl(`/api/comments?postId=${id}`), {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!getCommentsResponse.ok) {
+                    throw new Error(`Failed to fetch comments for post id: ${id}`);
                 }
-                const data = await response.json();
+                const post = await getPostsResponse.json();
+                let comments = await getCommentsResponse.json();
                 setBlogData({
-                    title: data.title,
-                    content: data.content,
-                    images: data.images,
-                    likes: data.likes,
-                    views: data.views,
-                    author: data.author.name,
-                    date: data.date,
-                    comments: data.comments,
-                    likedByUser: data.likedBy ? data.likedBy.includes(localStorage.getItem('userId')) : false
+                    title: post.title,
+                    content: post.content,
+                    images: post.images,
+                    likes: post.likes,
+                    views: post.views,
+                    author: post.author.name,
+                    date: post.date,
+                    comments: comments,
+                    likedByUser: post.likedBy ? post.likedBy.includes(localStorage.getItem('userId')) : false
                 });
             } catch (error) {
                 console.error('Error fetching post:', error);
@@ -162,7 +169,7 @@ const Blog = () => {
                 </div>
                 <div>
                     <button>Edit</button> 
-                    <button>Delete</button> 
+                    <button onClick={() => handleDelete(comment._id)}>Delete</button> 
                 </div>
             </div>
             <BlogContent title={blogData.title} content={blogData.content} images={blogData.images} />
