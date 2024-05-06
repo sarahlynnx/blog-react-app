@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../userContext";
+import { formatDate } from "../DateFormat";
 
 const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
   const { currentUser } = useContext(UserContext);
@@ -37,17 +38,29 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
                 <button onClick={() => saveEdit(comment._id)}>Save</button>
               </>
             ) : (
-              <>
+              <div className="d-flex flex-column">
+              <div className="comment-header">
+                <div className="comment-header" style={{width: '250px'}}>
+                  <div><strong>
+                    {comment.author.name}
+                  </strong></div>
+                  <div>
+                  {formatDate(comment.createdAt)}
+                  </div>
+                </div>
+                  {currentUser && comment.author._id === currentUser.id && (
+                    <div>
+                      <button onClick={() => beginEdit(comment)}>Edit</button>
+                      <button onClick={() => handleDelete(comment._id)}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+              </div>
+              <div className="comment-content">
                 {comment.content}
-                {currentUser && comment.author._id === currentUser._id && (
-                  <>
-                    <button onClick={() => beginEdit(comment)}>Edit</button>
-                    <button onClick={() => handleDelete(comment._id)}>
-                      Delete
-                    </button>
-                  </>
-                )}
-              </>
+              </div>
+              </div>
             )}
           </li>
         ))}
