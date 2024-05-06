@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { getApiUrl } from "../api";
+import { getApiUrl, getBlogImageUrl } from "../api";
 import { formatDate } from "../DateFormat";
 import { UserContext } from "../userContext";
 import './bloglist.css';
@@ -74,9 +74,9 @@ const BlogList = () => {
                 <div className="blog-img">
                   {blog.images.length > 0 && (
                     <img
-                      src={`${getApiUrl("/api/posts/")}${blog._id}/image/${blog.images[0]._id}`}
-                      alt={`Thumbnail for ${blog.title} Blog`}
-                    />
+                    src={getBlogImageUrl(blog._id, blog.images[0]._id)}
+                    alt={`Thumbnail for ${blog.title} Blog`}
+                />
                   )}
                 </div>
               </Col>

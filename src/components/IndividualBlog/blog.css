@@ -122,3 +122,15 @@
     border: none;
     cursor: pointer;
 }
+
+.blog-main-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+.blog-secondary-image {
+    max-width: 100px; /* Adjust the width of secondary images */
+    height: auto;
+    margin-right: 10px; /* Add spacing between secondary images */
+}

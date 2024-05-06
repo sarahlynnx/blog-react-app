@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './blog.css';
 import { useParams } from 'react-router-dom';
 import BlogContent from './BlogContent';
@@ -6,7 +6,7 @@ import SharingIcons from './SharingIcons';
 import Interactions from './Interactions';
 import CommentsSection from './CommentsSection';
 import CommentForm from './CommentForm';
-import { getApiUrl } from '../api';
+import { getApiUrl, getBlogImageUrl } from '../api';
 import { formatDate } from '../DateFormat';
 
 const Blog = () => {
@@ -14,13 +14,14 @@ const Blog = () => {
     const [comment, setComment] = useState('');
     const [blogData, setBlogData] = useState({
         title: '',
-        content: [],
+        content: '',
         images: [],
         likes: 0,
         views: 0,
         author: '',
         date: '',
         comments: [],
+        likedByUser: false
     });
 
     const handleLike = async () => {
@@ -33,12 +34,12 @@ const Blog = () => {
                     'Authorization': `Bearer ${token}`,
                 }
             });
-            if(response.ok) {
+            if (response.ok) {
                 const data = await response.json();
-                setBlogData(prevData => ({ 
-                    ...prevData, 
+                setBlogData(prevData => ({
+                    ...prevData,
                     likes: data.likes,
-                    likedByUser: data.likedByUser 
+                    likedByUser: data.likedByUser
                 }));
             } else {
                 throw new Error('Error updating likes');
@@ -80,17 +81,17 @@ const Blog = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: updatedContent}),
+                body: JSON.stringify({ content: updatedContent }),
             });
             if (!response.ok) {
                 throw new Error('Failed to update comment');
             }
-            setBlogData(prevData => {
-                const updatedComments = prevData.comments.map(comment => 
+            setBlogData(prevData => ({
+                ...prevData,
+                comments: prevData.comments.map(comment =>
                     comment._id === commentId ? { ...comment, content: updatedContent } : comment
-                );
-                return { ...prevData, comments: updatedComments };
-            });
+                )
+            }));
         } catch (error) {
             console.error('Error updating comment:', error);
             alert('An error occurred while updating the comment. Please try again.');
@@ -107,7 +108,7 @@ const Blog = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content: comment, postId: `${id}` }),
+                body: JSON.stringify({ content: comment, postId: id }),
             });
             if (!response.ok) {
                 throw new Error('Failed to submit comment');
@@ -125,27 +126,14 @@ const Blog = () => {
             console.log(`Component mounted or id changed: ${id}`);
             try {
                 console.log(`Fetching post data for ID: ${id}`);
-                const getPostsResponse = await fetch(getApiUrl(`/api/posts/${id}`), {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                let getCommentsResponse = await fetch(getApiUrl(`/api/comments?postId=${id}`), {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (!getCommentsResponse.ok) {
-                    throw new Error(`Failed to fetch comments for post id: ${id}`);
-                }
-                const post = await getPostsResponse.json();
-                let comments = await getCommentsResponse.json();
+                const post = await fetchPost(id);
+                const comments = await fetchComments(id);
+                const images = await fetchImages(id, post.images);
+
                 setBlogData({
                     title: post.title,
                     content: post.content,
-                    images: post.images,
+                    images: images,
                     likes: post.likes,
                     views: post.views,
                     author: post.author.name,
@@ -157,8 +145,57 @@ const Blog = () => {
                 console.error('Error fetching post:', error);
             }
         };
+
         fetchBlogData();
     }, [id]);
+
+    const fetchPost = async (postId) => {
+        const response = await fetch(getApiUrl(`/api/posts/${postId}`), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch post with ID: ${postId}`);
+        }
+        return await response.json();
+    };
+
+    const fetchComments = async (postId) => {
+        const response = await fetch(getApiUrl(`/api/comments?postId=${postId}`), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch comments for post ID: ${postId}`);
+        }
+        return await response.json();
+    };
+
+    const fetchImages = async (postId, images) => {
+        const imagesData = await Promise.all(images.map(async (image) => {
+            try {
+                const imageUrl = getBlogImageUrl(postId, image._id);
+                const response = await fetch(imageUrl);
+                if (response.ok) {
+                    const imageData = await response.blob();
+                    return {
+                        ...image,
+                        url: URL.createObjectURL(imageData),
+                    };
+                } else {
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching image:', error);
+                return null;
+            }
+        }));
+        return imagesData.filter(img => img !== null);
+    };
 
     return (
         <div className='blog-container'>
@@ -168,18 +205,17 @@ const Blog = () => {
                     <div>{formatDate(blogData.date)}</div>
                 </div>
                 <div>
-                    <button>Edit</button> 
-                    <button onClick={() => handleDelete(comment._id)}>Delete</button> 
+                    <button>Edit</button>
+                    <button onClick={() => handleDelete(comment._id)}>Delete</button>
                 </div>
             </div>
             <BlogContent title={blogData.title} content={blogData.content} images={blogData.images} />
             <SharingIcons />
             <Interactions views={blogData.views} likes={blogData.likes} onLike={handleLike} />
             <CommentsSection comments={blogData.comments} handleDelete={handleDelete} handleEdit={handleEdit} />
-            <CommentForm handleSubmit={handleSubmit} comment={comment} setComment={setComment} /> 
-        </div>  
+            <CommentForm handleSubmit={handleSubmit} comment={comment} setComment={setComment} />
+        </div>
     );
 };
-
 
 export default Blog;
