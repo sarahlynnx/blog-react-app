@@ -6,15 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UserProvider } from './components/userContext';
 
+const rootElement = document.getElementById('react-root');
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+        <UserProvider>
+            <App />
+        </UserProvider>
+    );
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <UserProvider>
-      <App />
-    </UserProvider>
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    reportWebVitals();
+} else {
+    console.error("Failed to find root element to mount the React app.");
+}

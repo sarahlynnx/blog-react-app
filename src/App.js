@@ -14,6 +14,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/blog.html" element={<BlogList />} />
         <Route path="/" element={<BlogList />} />
         <Route path="blog/:id" element={<Blog />} /> 
         <Route path="blog/create" element={<CreateBlog />} />
