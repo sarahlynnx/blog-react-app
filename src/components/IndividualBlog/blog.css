@@ -12,6 +12,7 @@
 .blog-content {
     margin: auto;
     max-width: 700px;
+    width: 700px;
     text-align: justify;
     padding-top: 3rem;
 }
@@ -43,8 +44,11 @@
     justify-content: space-between;
     align-items: center;
     padding: 2px;
-    margin: 40px auto auto;
-    width: 78%;
+    margin: auto auto 40px;
+}
+
+.post-update-input {
+    border: solid 1px;
 }
 
 .sharing-icons {
@@ -151,14 +155,4 @@
     cursor: pointer;
 }
 
-/* .blog-main-image {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px; 
-}
 
-.blog-secondary-image {
-    max-width: 100px;
-    height: auto;
-    margin-right: 10px; 
-} */

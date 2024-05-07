@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import './blog.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import BlogContent from './BlogContent';
@@ -6,14 +6,11 @@ import SharingIcons from './SharingIcons';
 import Interactions from './Interactions';
 import CommentsSection from './CommentsSection';
 import CommentForm from './CommentForm';
-import { UserContext } from "../userContext";
 import { getApiUrl, getBlogImageUrl } from '../api';
-import { formatDate } from '../DateFormat';
 
 const Blog = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { currentUser } = useContext(UserContext);
     const [comment, setComment] = useState('');
     const [blogData, setBlogData] = useState({
         title: '',
@@ -134,6 +131,32 @@ const Blog = () => {
         }
     };
 
+    // // Edit post
+    const handleEditPost = async ( updatedContent, updatedTitle) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(getApiUrl(`/api/posts/${id}`), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ content: updatedContent, title: updatedTitle }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update post');
+            }
+            setBlogData(prevData => ({
+                ...prevData,
+                title: updatedTitle,
+                content: updatedContent
+            }));
+        } catch (error) {
+            console.error(error);
+            alert('An error occured while updating the post. Please try again.');
+        }
+    }
+
     // Post comment
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -239,19 +262,15 @@ const Blog = () => {
 
     return (
         <div className='blog-container'>
-            <div className='individual-blog-header'>
-                <div className='d-flex flex-row gap-4'>
-                    <div>{blogData.author.name}</div>
-                    <div>{formatDate(blogData.date)}</div>
-                </div>
-                {currentUser && blogData.author._id === currentUser.id && (
-                    <div>
-                        <button className='author-blog-btns'>Edit</button>
-                        <button className='author-blog-btns' onClick={handleDeletePost}>Delete</button>
-                    </div>
-                )}
-            </div>
-            <BlogContent title={blogData.title} content={blogData.content} images={blogData.images}/>
+            <BlogContent 
+                title={blogData.title} 
+                content={blogData.content} 
+                images={blogData.images} 
+                author={blogData.author} 
+                date={blogData.date} 
+                handleDeletePost={handleDeletePost} 
+                handleEditPost={handleEditPost}
+            />
             <SharingIcons />
             <Interactions views={blogData.views} likes={blogData.likes} onLike={handleLike} />
             <CommentsSection comments={blogData.comments} handleDelete={handleDelete} handleEdit={handleEdit} />
