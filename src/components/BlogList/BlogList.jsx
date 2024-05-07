@@ -76,14 +76,16 @@ const BlogList = () => {
                     <img
                     src={getBlogImageUrl(blog._id, blog.images[0]._id)}
                     alt={`Thumbnail for ${blog.title} Blog`}
-                />
+                    />
                   )}
                 </div>
               </Col>
               <Col sm className="p-2">
                 <div className="blog-info">
-                  <p className="blog-author-date">{blog.author.name}</p>
-                  <p className="blog-author-date">{formatDate(blog.date)}</p>
+                  <div className="bloglist-blog-header">
+                  <div className="blog-author-date">{blog.author.name}</div>
+                  <div className="blog-author-date">{formatDate(blog.date)}</div>
+                </div>
                   <h2>{blog.title}</h2>
                   <p>{blog.content}</p>
                 </div>

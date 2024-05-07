@@ -31,8 +31,7 @@
   
   .blog-preview {
     margin: auto;
-    max-width: 800px;
-    width: 80%;
+    max-width: 900px;
   }
   
   .blog-row {
@@ -46,7 +45,7 @@
     margin: auto;
     align-items: center;
     justify-content: center;
-    width: 350px; 
+    width: auto; 
     height: 350px; 
     overflow: hidden; 
   }
@@ -61,11 +60,15 @@
     margin: auto;
     max-width: 350px;
     min-width: 250px;
+    text-align: left;
+  }
+
+  .bloglist-blog-header {
+    margin-bottom: 20px;
   }
   
   .blog-author-date {
-    margin-bottom: 10%;
-    text-align: right;
+    text-align: left;
   }
   
   .blog-info h2 {

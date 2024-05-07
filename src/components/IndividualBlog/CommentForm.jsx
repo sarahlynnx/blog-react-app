@@ -10,6 +10,7 @@ const CommentForm = ({handleSubmit, comment, setComment}) => {
                     type='text'
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
+                    required
                 />
                 <button type='submit'>Submit</button>
             </form>
