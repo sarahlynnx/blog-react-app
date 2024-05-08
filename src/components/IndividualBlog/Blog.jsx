@@ -173,7 +173,12 @@ const Blog = () => {
             if (!response.ok) {
                 throw new Error('Failed to submit comment');
             }
-            console.log('Comment submitted successfully');
+            const data = await response.json();
+            console.log(data);
+            setBlogData(prevData => ({
+                ...prevData,
+                comments: [...prevData.comments, data.comment],
+            }));
             setComment('');
         } catch (error) {
             console.error('Error submitting comment:', error.message);

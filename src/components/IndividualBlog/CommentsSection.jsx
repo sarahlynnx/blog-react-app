@@ -25,43 +25,40 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
     <div className="comments-section">
       <h2>Comments</h2>
       <ul>
-        {comments.map((comment, index) => (
-          <li key={index}>
-            {commentId === comment._id ? (
-              <>
+        {comments.map((comment) => (
+          <li key={comment._id}>
+            <div className="comment-item d-flex flex-column">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <div className="comment-header" style={{ width: "250px" }}>
+                  <strong>{comment.author.name}</strong>
+                  {formatDate(comment.createdAt)}
+                </div>
+                {currentUser && comment.author._id === currentUser.id && (
+                  <>
+                    {commentId === comment._id ? (
+                      <div>
+                        <button onClick={cancelEdit}>Cancel</button>
+                        <button onClick={() => saveEdit(comment._id)}>Save</button>
+                      </div>
+                    ) : (
+                      <div>
+                        <button onClick={() => beginEdit(comment)}>Edit</button>
+                        <button onClick={() => handleDelete(comment._id)}>Delete</button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {commentId === comment._id ? (
                 <input
                   type="text"
                   value={commentContent}
                   onChange={(e) => setCommentContent(e.target.value)}
                 />
-                <button onClick={cancelEdit}>Cancel</button>
-                <button onClick={() => saveEdit(comment._id)}>Save</button>
-              </>
-            ) : (
-              <div className="d-flex flex-column">
-              <div className="comment-header">
-                <div className="comment-header" style={{width: '250px'}}>
-                  <div><strong>
-                    {comment.author.name}
-                  </strong></div>
-                  <div>
-                  {formatDate(comment.createdAt)}
-                  </div>
-                </div>
-                  {currentUser && comment.author._id === currentUser.id && (
-                    <div>
-                      <button onClick={() => beginEdit(comment)}>Edit</button>
-                      <button onClick={() => handleDelete(comment._id)}>
-                        Delete
-                      </button>
-                    </div>
-                  )}
+              ) : (
+                <div className="comment-content">{comment.content}</div>
+              )}
               </div>
-              <div className="comment-content">
-                {comment.content}
-              </div>
-              </div>
-            )}
           </li>
         ))}
       </ul>
