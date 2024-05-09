@@ -24,9 +24,19 @@ const Blog = () => {
         likedByUser: false
     });
 
+    const clearTokenAndRedirect = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    }
+
     // like post
-    const handleLike = async () => {
+    const handleLike = async () => {        
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
+    
         try {
             const response = await fetch(getApiUrl(`/api/posts/${id}/like`), {
                 method: 'PUT',
@@ -35,25 +45,37 @@ const Blog = () => {
                     'Authorization': `Bearer ${token}`,
                 }
             });
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
+                console.log('before update:', blogData.likedByUser);
                 setBlogData(prevData => ({
                     ...prevData,
                     likes: data.likes,
                     likedByUser: data.likedByUser
                 }));
+                console.log('after update', data.likedByUser);
                 console.log(data.msg);
             } else {
-                throw new Error('Error updating likes');
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Error updating likes');
+                }
             }
         } catch (error) {
             console.error('Error updating likes:', error);
+            alert('An error occured while updating likes.');
         }
     };
 
     // delete comment
-    const handleDelete = async (commentId) => {
+    const handleDeleteComment = async (commentId) => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
         try {
             const response = await fetch(getApiUrl(`/api/comments/${commentId}`), {
                 method: 'DELETE',
@@ -62,15 +84,21 @@ const Blog = () => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-            if (!response.ok) {
-                throw new Error('Failed to delete comment');
-            }
-            setBlogData(prevData => ({
-                ...prevData,
-                comments: prevData.comments.filter(comment => comment._id !== commentId)
-            }));
             const data = await response.json();
-            alert(data.msg);
+            if (response.ok) {
+                setBlogData(prevData => ({
+                    ...prevData,
+                    comments: prevData.comments.filter(comment => comment._id !== commentId)
+                }));
+                alert(data.msg);
+            } else {
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Failed to delete comment');
+                }
+            }
         } catch (error) {
             console.error(error);
             alert('An error occurred while deleting the comment. Please try again.');
@@ -80,6 +108,10 @@ const Blog = () => {
     // Delete post
     const handleDeletePost = async () => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
         if (!window.confirm('Are you sure you want to delete this post?')) {
             console.log('Deletion cancelled');
             return;
@@ -91,13 +123,19 @@ const Blog = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete post');
-            }
+            });            
             const data = await response.json();
-            alert(data.msg);
-            navigate("/");
+            if (response.ok) {
+                alert(data.msg);
+                navigate("/");
+            } else {
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Failed to delete post');
+                }
+            }
         } catch (error) {
             console.error(error);
             alert('An error occured while deleting the post. Please try again.');
@@ -105,8 +143,12 @@ const Blog = () => {
     };
 
     // Edit comment
-    const handleEdit = async (commentId, updatedContent) => {
+    const handleEditComment = async (commentId, updatedContent) => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
         try {
             const response = await fetch(getApiUrl(`/api/comments/${commentId}`), {
                 method: 'PUT',
@@ -116,15 +158,21 @@ const Blog = () => {
                 },
                 body: JSON.stringify({ content: updatedContent }),
             });
-            if (!response.ok) {
-                throw new Error('Failed to update comment');
+            if (response.ok) {
+                setBlogData(prevData => ({
+                    ...prevData,
+                    comments: prevData.comments.map(comment =>
+                        comment._id === commentId ? { ...comment, content: updatedContent } : comment
+                    )
+                }));
+            } else {
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Failed to update comment');
+                }
             }
-            setBlogData(prevData => ({
-                ...prevData,
-                comments: prevData.comments.map(comment =>
-                    comment._id === commentId ? { ...comment, content: updatedContent } : comment
-                )
-            }));
         } catch (error) {
             console.error('Error updating comment:', error);
             alert('An error occurred while updating the comment. Please try again.');
@@ -134,6 +182,10 @@ const Blog = () => {
     // // Edit post
     const handleEditPost = async ( updatedContent, updatedTitle) => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
         try {
             const response = await fetch(getApiUrl(`/api/posts/${id}`), {
                 method: 'PUT',
@@ -143,24 +195,34 @@ const Blog = () => {
                 },
                 body: JSON.stringify({ content: updatedContent, title: updatedTitle }),
             });
-            if (!response.ok) {
-                throw new Error('Failed to update post');
+            if (response.ok) {
+                setBlogData(prevData => ({
+                    ...prevData,
+                    title: updatedTitle,
+                    content: updatedContent
+                }));
+            } else {
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Failed to update post');
+                }
             }
-            setBlogData(prevData => ({
-                ...prevData,
-                title: updatedTitle,
-                content: updatedContent
-            }));
         } catch (error) {
             console.error(error);
             alert('An error occured while updating the post. Please try again.');
         }
-    }
+    };
 
     // Post comment
-    const handleSubmit = async (e) => {
+    const handleSubmitComment = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please log in to like the post.');
+            return;
+        };
         try {
             const response = await fetch(getApiUrl('/api/comments'), {
                 method: 'POST',
@@ -170,16 +232,22 @@ const Blog = () => {
                 },
                 body: JSON.stringify({ content: comment, postId: id }),
             });
-            if (!response.ok) {
-                throw new Error('Failed to submit comment');
-            }
             const data = await response.json();
-            console.log(data);
-            setBlogData(prevData => ({
-                ...prevData,
-                comments: [...prevData.comments, data.comment],
-            }));
-            setComment('');
+            if (response.ok) {
+                console.log(data);
+                setBlogData(prevData => ({
+                    ...prevData,
+                    comments: [...prevData.comments, data.comment],
+                }));
+                setComment('');
+            } else {
+                if (response.status === 401) {
+                    alert('Session has expired, please log in again.');
+                    clearTokenAndRedirect();
+                } else {
+                    throw new Error('Failed to submit comment');
+                }
+            }
         } catch (error) {
             console.error('Error submitting comment:', error.message);
             alert('An error occurred while submitting the comment. Please try again.');
@@ -195,6 +263,7 @@ const Blog = () => {
                 const post = await fetchPost(id);
                 const comments = await fetchComments(id);
                 const images = await fetchImages(id, post.images);
+                const likedByUser = post.likedBy.includes(localStorage.getItem('userId'));
                 setBlogData({
                     title: post.title,
                     content: post.content,
@@ -204,7 +273,7 @@ const Blog = () => {
                     author: post.author,
                     date: post.date,
                     comments: comments,
-                    likedByUser: post.likedBy ? post.likedBy.includes(localStorage.getItem('userId')) : false
+                    likedByUser: likedByUser
                 });
             } catch (error) {
                 console.error('Error fetching post:', error);
@@ -277,9 +346,9 @@ const Blog = () => {
                 handleEditPost={handleEditPost}
             />
             <SharingIcons />
-            <Interactions views={blogData.views} likes={blogData.likes} onLike={handleLike} />
-            <CommentsSection comments={blogData.comments} handleDelete={handleDelete} handleEdit={handleEdit} />
-            <CommentForm handleSubmit={handleSubmit} comment={comment} setComment={setComment} />
+            <Interactions views={blogData.views} likes={blogData.likes} onLike={handleLike} likedByUser={blogData.likedByUser} />
+            <CommentsSection comments={blogData.comments} handleDelete={handleDeleteComment} handleEdit={handleEditComment} />
+            <CommentForm handleSubmit={handleSubmitComment} comment={comment} setComment={setComment} />
         </div>
     );
 };

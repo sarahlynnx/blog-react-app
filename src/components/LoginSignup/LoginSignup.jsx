@@ -40,11 +40,10 @@ const LoginSignup = () => {
         localStorage.setItem('token', token); 
         console.log('Login successful!');
         navigate('/');
-    } catch (error) {
-        console.error('Login failed: ', error.message);
-        alert('An error occurred while logging in. Please try again later.');
-
-    }
+        } catch (error) {
+            console.error('Login failed: ', error.message);
+            alert('An error occurred while logging in. Please try again later.');
+        }
     };
 
     const handleSignupSubmit = async (e) => {
