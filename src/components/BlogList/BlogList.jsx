@@ -61,7 +61,7 @@ const BlogList = () => {
             )}
           </div>
         ) : (
-          <Link className="blog-login-link" to={"/login"}>
+          <Link className="blog-login-link" to={"/signup"}>
             <button className="blog-login-btn">Login / Sign Up</button>
           </Link>
         )}

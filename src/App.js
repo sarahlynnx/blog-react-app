@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Blog from './components/IndividualBlog/Blog';
 import BlogList from './components/BlogList/BlogList';
 import CreateBlog from './components/CreateBlog/CreateBlog';
-import LoginSignup from './components/LoginSignup/LoginSignup';
+import Login from './components/Login/Login';
+import Signup from './components/Signup/Signup';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas, faHeart, faUser } from '@fortawesome/free-solid-svg-icons';
 import { faXTwitter, faFacebook, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
@@ -18,7 +19,8 @@ function App() {
         <Route path="/" element={<BlogList />} />
         <Route path="blog/:id" element={<Blog />} /> 
         <Route path="blog/create" element={<CreateBlog />} />
-        <Route path="login" element={<LoginSignup />} />
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<Signup />} />
       </Routes>
     </Router>
   );
