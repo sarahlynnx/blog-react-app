@@ -5,9 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './components/userContext';
 
-const rootElement = document.getElementById('root');
-if (rootElement) {
-    const root = ReactDOM.createRoot(rootElement);
+const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(
         <UserProvider>
             <App />
@@ -15,6 +13,3 @@ if (rootElement) {
     );
 
     reportWebVitals();
-} else {
-    console.error("Failed to find root element to mount the React app.");
-}
