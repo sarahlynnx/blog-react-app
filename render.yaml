@@ -1,0 +1,5 @@
+services:
+  - type: static
+    name: blog-react-app
+    env: static
+    staticPublishPath: ./build
