@@ -1,9 +1,13 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 
 const UserContext = createContext(null);
 
 const UserProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('currentUser')));
+
+    useEffect(() => {
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }, [currentUser]);
 
     const signup = (user) => {
         setCurrentUser(user);
@@ -15,6 +19,7 @@ const UserProvider = ({ children }) => {
 
     const logout = () => {
         setCurrentUser(null);
+        localStorage.removeItem('currentUser');
     };
     
     return (

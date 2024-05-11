@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './blog.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import BlogContent from './BlogContent';
@@ -6,9 +6,11 @@ import SharingIcons from './SharingIcons';
 import Interactions from './Interactions';
 import CommentsSection from './CommentsSection';
 import CommentForm from './CommentForm';
+import { UserContext } from "../userContext";
 import { getApiUrl, getBlogImageUrl } from '../api';
 
 const Blog = () => {
+    const { currentUser } = useContext(UserContext);
     const navigate = useNavigate();
     const { id } = useParams();
     const [comment, setComment] = useState('');
@@ -263,7 +265,7 @@ const Blog = () => {
                 const post = await fetchPost(id);
                 const comments = await fetchComments(id);
                 const images = await fetchImages(id, post.images);
-                const likedByUser = post.likedBy.includes(localStorage.getItem('userId'));
+                const likedByUser = post.likedBy.includes(currentUser.id);
                 setBlogData({
                     title: post.title,
                     content: post.content,
@@ -281,7 +283,7 @@ const Blog = () => {
         };
 
         fetchBlogData();
-    }, [id]);
+    }, [id, currentUser]);
 
     // Get Individual Post
     const fetchPost = async (postId) => {
