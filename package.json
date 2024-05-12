@@ -1,6 +1,6 @@
 {
-  "name": "blog-article",
-  "version": "0.1.0",
+  "name": "blog-react-app",
+  "version": "1.0.2",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -24,6 +24,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:local": "cross-env PORT=4001 REACT_APP_SERVER_BASE_URL=http://localhost:3001 react-scripts start",
+    "start:prod": "cross-env PORT=4001 REACT_APP_SERVER_BASE_URL=https://blog-server-8yo5.onrender.com react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -51,6 +53,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-property-in-object": "^7.23.4",
+    "cross-env": "^7.0.3",
     "gh-pages": "^6.1.1"
   }
 }
