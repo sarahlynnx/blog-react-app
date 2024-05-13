@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./CreateBlog.css";
 import ReactMarkdown from "react-markdown";
@@ -9,6 +9,12 @@ const CreateBlog = () => {
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
 
+    useEffect(() => {
+    return () => {
+      images.forEach(file => URL.revokeObjectURL(file));
+    };
+  }, [images]);
+
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -18,6 +24,8 @@ const CreateBlog = () => {
   };
 
   const handleImageChange = (e) => {
+    images.forEach(file => URL.revokeObjectURL(file));
+
     setImages(Array.from(e.target.files));
   };  
 
@@ -25,8 +33,6 @@ const CreateBlog = () => {
   # ${title}
 
   ${content}
-
-  ${images.map(file => `![${file.name}](${URL.createObjectURL(file)})`).join("\n")}
   `;
 
   const handleSubmit = async (e) => {
@@ -105,7 +111,12 @@ const CreateBlog = () => {
       </form>
       <div>
         <h3>Preview</h3>
-        <ReactMarkdown className="create-blog-preview">{markdownContent}</ReactMarkdown>
+        <ReactMarkdown className="create-blog-preview">
+          {markdownContent}
+        </ReactMarkdown>
+        {images.map(file => (
+         <img key={file.name} src={URL.createObjectURL(file)} alt={file.name} style={{width: '330px'}}/>
+        ))}
       </div>
     </div>
   );
