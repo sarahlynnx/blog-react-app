@@ -1,5 +1,6 @@
-import './App.css';
+
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Blog from './components/IndividualBlog/Blog';
 import BlogList from './components/BlogList/BlogList';
 import CreateBlog from './components/CreateBlog/CreateBlog';
@@ -17,7 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<BlogList />} />
         <Route path="/blog/:id" element={<Blog />} />
-        <Route path="/create" element={<CreateBlog />} />
+        <Route path="/blog/create" element={<CreateBlog />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="*" element={<BlogList />} />

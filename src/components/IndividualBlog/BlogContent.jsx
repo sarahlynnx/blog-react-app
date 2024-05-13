@@ -1,6 +1,8 @@
 import React, {useState, useContext} from 'react';
 import { formatDate } from '../DateFormat';
 import { UserContext } from "../userContext";
+import { Container } from 'react-bootstrap';
+import ReactMarkdown from "react-markdown";
 
 const BlogContent = ({ title, content, images, author, date, handleDeletePost, handleEditPost }) => {
     const { currentUser } = useContext(UserContext);
@@ -23,10 +25,10 @@ const BlogContent = ({ title, content, images, author, date, handleDeletePost, h
     const saveEdit =() => {
         handleEditPost(postContent, postTitle);
         setEditing(false);
-    }
+    };
 
     return (
-        <div className='blog-content'>
+        <Container className='blog-content'>
             <div className='individual-blog-header'>
                 <div className='d-flex flex-row gap-4'>
                     <div>{author.name}</div>
@@ -51,18 +53,18 @@ const BlogContent = ({ title, content, images, author, date, handleDeletePost, h
             {editing ? (
                 <>
                     <input type='text' value={postTitle} onChange={(e) => setPostTitle(e.target.value)} className='post-update-input'/>
-                    <textarea value={postContent} onChange={(e) => setPostContent(e.target.value)} className='post-update-input'/>
+                    <textarea value={postContent} onChange={(e) => setPostContent(e.target.value)} className='post-update-input textarea'/>
                 </>
             ) : (
                 <>
-                    <h1>{title}</h1>
-                    <p>{content}</p> 
+                    <ReactMarkdown>{`# ${title}`}</ReactMarkdown>
+                    <ReactMarkdown>{content}</ReactMarkdown>
                 </>
             )}
             {images.length > 0 && images.map((image, index) => (
                 <img src={image.url} alt={title} key={index} className='blog-image' />
             ))}
-        </div>
+        </Container>
     );
 };
 

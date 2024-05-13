@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import ReactMarkdown from "react-markdown";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { getApiUrl, getBlogImageUrl } from "../api";
@@ -86,8 +87,8 @@ const BlogList = () => {
                   <div className="blog-author-date">{blog.author.name}</div>
                   <div className="blog-author-date">{formatDate(blog.date)}</div>
                 </div>
-                  <h2>{blog.title}</h2>
-                  <p>{blog.content}</p>
+                  <ReactMarkdown>{`# ${blog.title}`}</ReactMarkdown>
+                  <ReactMarkdown>{blog.content}</ReactMarkdown>
                 </div>
               </Col>
             </Row>

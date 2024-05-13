@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Container } from "react-bootstrap";
 import { getApiUrl } from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../userContext';
@@ -45,22 +46,22 @@ const Login = () => {
     };
 
     return (
-        <div className='login-container'>
+        <Container className='login-container'>
             <div className='login-header'>
                 <div className='login-text'>Log In</div>
                 <div className='login-underline'></div>
-                <Link to={'/signup'}>Not yet signed up? Sign Up</Link>
+                <Link className='auth-action-links' to={'/signup'}>Not yet signed up? <span>Sign Up</span></Link>
             </div>
-            <form className='login-inputs' onSubmit={handleLoginSubmit} >
-                <div className='login-input'>
-                    <img src={email_icon} alt='email-icon' />
-                    <input id='email' type='email' name='email' placeholder='Email' autoComplete='email'/>
+            <form className='login-form' onSubmit={handleLoginSubmit} >
+                <div className='input-container'>
+                    <img className='login-input-icon' src={email_icon} alt='email-icon' />
+                    <input className='login-input' id='email' type='email' name='email' placeholder='Email' autoComplete='email'/>
                 </div>
-                <div className='login-input'>
-                    <img src={password_icon} alt='password-icon' />
-                    <input id='password' type='password' name='password' placeholder='Password' autoComplete='current-password' />
+                <div className='input-container'>
+                    <img className='login-input-icon' src={password_icon} alt='password-icon' />
+                    <input className='login-input' id='password' type='password' name='password' placeholder='Password' autoComplete='current-password' />
                 </div>
-                <div className='login-forgot-password'>
+                <div className='auth-action-links'>
                     Forgot Password? <span>Click Here!</span>
                 </div>
                 <div className='login-submit-container'>
@@ -69,7 +70,7 @@ const Login = () => {
                     </button>
                 </div>
             </form>
-        </div>
+        </Container>
     )
 }
 

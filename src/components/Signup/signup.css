@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: column;
     margin: 50px auto;
-    width: 600px;
+    width: 90%;
+    max-width: 600px;
     background: #fff;
 }
 
@@ -28,31 +29,42 @@
     border-radius: 9px;
 }
 
-.signup-inputs {
-    margin-top: 55px;
+.auth-action-links {
+    margin: 27px auto;
+    color: #797979;
+    font-size: 18px;
+}
+
+.auth-action-links span {
+    color: rgb(78,38,78);
+    cursor: pointer;
+}
+
+.signup-form {
+    margin-top: 25px;
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
 
-.signup-input {
+.input-container {
     display: flex;
     align-items: center;
-    margin: auto;
-    width: 480px;
+    max-width: 480px;
     height: 80px;
     background: #eaeaea;
     border-radius: 6px;
 }
 
-.signup-input img {
-    margin: 0px 30px;
+.signup-input-icon {
+    margin: 0px 20px;
 }
 
-.signup-input input {
+.signup-input {
     height: 50px;
-    width: 400px;
     background: transparent;
+    width: 100%;
+    padding: 10px;
     border: none;
     outline: none;
     color: #797979;

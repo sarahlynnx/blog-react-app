@@ -4,27 +4,21 @@
     box-sizing: border-box;
     border: 1px solid #000000;
     max-width: 900px;
-    margin: auto;
-    margin-top: 5rem;
+    width: 90%;
+    margin: 50px auto;
     padding-bottom: 5rem;
 }
 
 .blog-content {
     margin: auto;
     max-width: 700px;
-    width: 700px;
+    width: 90%;
     text-align: justify;
     padding-top: 3rem;
 }
 
 .blog-content h1 {
     font-weight: normal;
-    margin-bottom: 3rem;
-}
-
-.blog-content p {
-    margin: 2rem 0;
-    line-height: 1.5rem;
 }
 
 .blog-image {
@@ -48,7 +42,15 @@
 }
 
 .post-update-input {
+    padding: 10px;
     border: solid 1px;
+    display: block;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.textarea {
+    min-height: 150px;
 }
 
 .sharing-icons {

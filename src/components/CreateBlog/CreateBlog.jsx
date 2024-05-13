@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./CreateBlog.css";
 import ReactMarkdown from "react-markdown";
 import { getApiUrl } from "../api";
@@ -23,9 +24,9 @@ const CreateBlog = () => {
   const markdownContent = `
   # ${title}
 
-  ${images.map(file => `![${file.name}](${URL.createObjectURL(file)})`).join("\n")}
-
   ${content}
+
+  ${images.map(file => `![${file.name}](${URL.createObjectURL(file)})`).join("\n")}
   `;
 
   const handleSubmit = async (e) => {
@@ -64,8 +65,9 @@ const CreateBlog = () => {
 
   return (
     <div className="create-blog">
+      <div className="cancel-create"><Link className="cancel-link" to={'/'}>Cancel</Link></div>
       <h2>Create New Blog</h2>
-      <form className="create-blog-form" onSubmit={handleSubmit} method="post" enctype="multipart/form-data">
+      <form className="create-blog-form" onSubmit={handleSubmit} method="post" encType="multipart/form-data">
         <label htmlFor="title">
           Title
           <input

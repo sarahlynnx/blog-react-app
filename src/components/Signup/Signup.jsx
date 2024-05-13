@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import { getApiUrl } from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../userContext';
+import { Container } from "react-bootstrap";
 import './signup.css';
 
 import user_icon from '../Assets/user.png';
@@ -47,24 +48,24 @@ const Signup = () => {
     };
 
     return (
-        <div className='signup-container'>
+        <Container className='signup-container'>
             <div className='signup-header'>
                 <div className='signup-text'>Sign Up</div>
                 <div className='signup-underline'></div>
-                <Link to={'/login'}>Already a member? Log In</Link>
+                <Link className='auth-action-links' to={'/login'}>Already a member? <span>Log In</span></Link>
             </div>
-            <form className='signup-inputs' onSubmit={handleSignupSubmit} >
-                <div className='signup-input'>
-                    <img src={user_icon} alt='user-icon' />
-                    <input id='name' type='text' name='name' placeholder='Name' autoComplete='given-name' />
+            <form className='signup-form' onSubmit={handleSignupSubmit} >
+                <div className='input-container'>
+                    <img className='signup-input-icon' src={user_icon} alt='user-icon' />
+                    <input className='signup-input' id='name' type='text' name='name' placeholder='Name' autoComplete='given-name' />
                 </div>
-                <div className='signup-input'>
-                    <img src={email_icon} alt='email-icon' />
-                    <input id='email' type='email' name='email' placeholder='Email' autoComplete='email'/>
+                <div className='input-container'>
+                    <img className='signup-input-icon' src={email_icon} alt='email-icon' />
+                    <input className='signup-input' id='email' type='email' name='email' placeholder='Email' autoComplete='email'/>
                 </div>
-                <div className='signup-input'>
-                    <img src={password_icon} alt='password-icon' />
-                    <input id='password' type='password' name='password' placeholder='Password' autoComplete='new-password'/>
+                <div className='input-container'>
+                    <img className='signup-input-icon' src={password_icon} alt='password-icon' />
+                    <input className='signup-input' id='password' type='password' name='password' placeholder='Password' autoComplete='new-password'/>
                 </div>
                 <div className='signup-submit-container'>
                     <button type='submit' className='submit-btn'>
@@ -72,7 +73,7 @@ const Signup = () => {
                     </button>
                 </div>
             </form>
-        </div>
+        </Container>
     )
 }
 
