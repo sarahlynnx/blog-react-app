@@ -265,7 +265,7 @@ const Blog = () => {
                 const post = await fetchPost(id);
                 const comments = await fetchComments(id);
                 const images = await fetchImages(id, post.images);
-                const likedByUser = post.likedBy.includes(currentUser.id);
+                const likedByUser = currentUser ? post.likedBy.includes(currentUser.id) : false;
                 setBlogData({
                     title: post.title,
                     content: post.content,
