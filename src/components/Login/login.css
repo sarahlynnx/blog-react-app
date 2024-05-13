@@ -13,7 +13,6 @@
     align-items: center;
     gap: 9px;
     width: 100%;
-    margin-top: 30px;
 }
 
 .login-text {
@@ -30,10 +29,12 @@
 }
 
 .login-form {
-    margin-top: 25px;
+    margin: auto;
     display: flex;
     flex-direction: column;
     gap: 25px;
+    width: 100%;
+    max-width: 480px;
 }
 
 .input-container {
