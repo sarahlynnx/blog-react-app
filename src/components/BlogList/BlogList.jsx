@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getApiUrl, getBlogImageUrl } from "../api";
 import { formatDate } from "../DateFormat";
 import { UserContext } from "../userContext";
-import './bloglist.css';
+import "./bloglist.css";
 
 const BlogList = () => {
   const navigate = useNavigate();
@@ -69,14 +69,18 @@ const BlogList = () => {
       </div>
       <div className="blog-preview">
         {blogs.map((blog) => (
-          <Link className="ind-blog-link" to={`/blog/${blog._id}`} key={blog._id}>
+          <Link
+            className="ind-blog-link"
+            to={`/blog/${blog._id}`}
+            key={blog._id}
+          >
             <Row className="blog-row">
               <Col sm className="p-2">
                 <div className="blog-img">
                   {blog.images.length > 0 && (
                     <img
-                    src={getBlogImageUrl(blog._id, blog.images[0]._id)}
-                    alt={`Thumbnail for ${blog.title} Blog`}
+                      src={getBlogImageUrl(blog._id, blog.images[0]._id)}
+                      alt={`Thumbnail for ${blog.title} Blog`}
                     />
                   )}
                 </div>
@@ -84,9 +88,11 @@ const BlogList = () => {
               <Col sm className="p-2">
                 <div className="blog-info">
                   <div className="bloglist-blog-header">
-                  <div className="blog-author-date">{blog.author.name}</div>
-                  <div className="blog-author-date">{formatDate(blog.date)}</div>
-                </div>
+                    <div className="blog-author-date">{blog.author.name}</div>
+                    <div className="blog-author-date">
+                      {formatDate(blog.date)}
+                    </div>
+                  </div>
                   <ReactMarkdown>{`## ${blog.title}`}</ReactMarkdown>
                   <ReactMarkdown>{blog.content}</ReactMarkdown>
                 </div>

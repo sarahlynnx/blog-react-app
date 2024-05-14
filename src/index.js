@@ -6,10 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './components/userContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(
-        <UserProvider>
-            <App />
-        </UserProvider>
-    );
+root.render(
+    <UserProvider>
+        <App />
+    </UserProvider>
+);
 
-    reportWebVitals();
+reportWebVitals();

@@ -5,13 +5,13 @@ import ReactMarkdown from "react-markdown";
 import { getApiUrl } from "../api";
 
 const CreateBlog = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
 
-    useEffect(() => {
+  useEffect(() => {
     return () => {
-      images.forEach(file => URL.revokeObjectURL(file));
+      images.forEach((file) => URL.revokeObjectURL(file));
     };
   }, [images]);
 
@@ -24,10 +24,10 @@ const CreateBlog = () => {
   };
 
   const handleImageChange = (e) => {
-    images.forEach(file => URL.revokeObjectURL(file));
+    images.forEach((file) => URL.revokeObjectURL(file));
 
     setImages(Array.from(e.target.files));
-  };  
+  };
 
   const markdownContent = `
   # ${title}
@@ -39,14 +39,13 @@ const CreateBlog = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    images.forEach((image, index) => 
-      formData.append('images', image));
+    formData.append("title", title);
+    formData.append("content", content);
+    images.forEach((image, index) => formData.append("images", image));
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(getApiUrl('/api/posts'), {
+      const response = await fetch(getApiUrl("/api/posts"), {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,9 +70,18 @@ const CreateBlog = () => {
 
   return (
     <div className="create-blog">
-      <div className="cancel-create"><Link className="cancel-link" to={'/'}>Cancel</Link></div>
+      <div className="cancel-create">
+        <Link className="cancel-link" to={"/"}>
+          Cancel
+        </Link>
+      </div>
       <h2>Create New Blog</h2>
-      <form className="create-blog-form" onSubmit={handleSubmit} method="post" encType="multipart/form-data">
+      <form
+        className="create-blog-form"
+        onSubmit={handleSubmit}
+        method="post"
+        encType="multipart/form-data"
+      >
         <label htmlFor="title">
           Title
           <input
@@ -114,8 +122,13 @@ const CreateBlog = () => {
         <ReactMarkdown className="create-blog-preview">
           {markdownContent}
         </ReactMarkdown>
-        {images.map(file => (
-         <img key={file.name} src={URL.createObjectURL(file)} alt={file.name} style={{width: '330px'}}/>
+        {images.map((file) => (
+          <img
+            key={file.name}
+            src={URL.createObjectURL(file)}
+            alt={file.name}
+            style={{ width: "330px" }}
+          />
         ))}
       </div>
     </div>

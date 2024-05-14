@@ -38,12 +38,16 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
                     {commentId === comment._id ? (
                       <div>
                         <button onClick={cancelEdit}>Cancel</button>
-                        <button onClick={() => saveEdit(comment._id)}>Save</button>
+                        <button onClick={() => saveEdit(comment._id)}>
+                          Save
+                        </button>
                       </div>
                     ) : (
                       <div>
                         <button onClick={() => beginEdit(comment)}>Edit</button>
-                        <button onClick={() => handleDelete(comment._id)}>Delete</button>
+                        <button onClick={() => handleDelete(comment._id)}>
+                          Delete
+                        </button>
                       </div>
                     )}
                   </>
@@ -58,7 +62,7 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
               ) : (
                 <div className="comment-content">{comment.content}</div>
               )}
-              </div>
+            </div>
           </li>
         ))}
       </ul>

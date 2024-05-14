@@ -61,6 +61,19 @@
     font-size: 19px;
 }
 
+.password-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.show-hide-icon {
+    border: none;
+    background: none;
+    margin: auto 20px;
+    color: #797979;
+}
+
 .auth-action-links {
     margin: 27px auto;
     color: #797979;
