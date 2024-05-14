@@ -87,7 +87,7 @@ const BlogList = () => {
                   <div className="blog-author-date">{blog.author.name}</div>
                   <div className="blog-author-date">{formatDate(blog.date)}</div>
                 </div>
-                  <ReactMarkdown>{`# ${blog.title}`}</ReactMarkdown>
+                  <ReactMarkdown>{`## ${blog.title}`}</ReactMarkdown>
                   <ReactMarkdown>{blog.content}</ReactMarkdown>
                 </div>
               </Col>

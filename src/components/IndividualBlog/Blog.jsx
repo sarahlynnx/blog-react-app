@@ -75,7 +75,7 @@ const Blog = () => {
     const handleDeleteComment = async (commentId) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in to like the post.');
+            alert('Please log in to delete your comment');
             return;
         };
         try {
@@ -111,7 +111,7 @@ const Blog = () => {
     const handleDeletePost = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in to like the post.');
+            alert('Please log in to delete the post.');
             return;
         };
         if (!window.confirm('Are you sure you want to delete this post?')) {
@@ -148,7 +148,7 @@ const Blog = () => {
     const handleEditComment = async (commentId, updatedContent) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in to like the post.');
+            alert('Please log in to edit your comment.');
             return;
         };
         try {
@@ -185,7 +185,7 @@ const Blog = () => {
     const handleEditPost = async ( updatedContent, updatedTitle) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in to like the post.');
+            alert('Please log in to edit the post.');
             return;
         };
         try {
@@ -222,7 +222,7 @@ const Blog = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in to like the post.');
+            alert('Please log in to submit a comment.');
             return;
         };
         try {
