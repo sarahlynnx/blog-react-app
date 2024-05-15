@@ -61,7 +61,7 @@
     font-size: 19px;
 }
 
-.password-wrapper {
+.login-password-wrapper {
     display: flex;
     align-items: center;
     width: 100%;
@@ -109,3 +109,75 @@
     background: #eaeaea;
     color: #676767;
 }
+
+/* ForgotPassword  & ResetPassword */
+
+.password-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-size: 18px;
+}
+
+.password-wrapper {
+    margin: auto;
+    border: 1px solid black;
+    height: auto;
+    width: 350px;
+}
+
+.password-header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.password-form {
+    margin: auto;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.password-form input {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 5px;
+    background-color: transparent;
+}
+
+.password-form input[type=email] {
+    border: 1px solid black;
+    border-radius: 0;
+    margin-bottom: 10px;
+    height: 50px;
+}
+
+.password-form button {
+    border: none;
+    height: 50px;
+    font-size: large;
+    margin: auto 5px;
+}
+
+.password-container button[type=submit] {
+    margin: unset;
+    background-color: #4e264e96;
+}
+
+.reset-password-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.reset-input-container {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    width: auto;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+

@@ -94,7 +94,7 @@ const Signup = () => {
             src={password_icon}
             alt="password-icon"
           />
-          <div className="password-wrapper">
+          <div className="signup-password-wrapper">
             <input
               className="signup-input"
               id="password"

@@ -3,12 +3,12 @@ import { Container } from "react-bootstrap";
 import { getApiUrl } from "../api";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../userContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./login.css";
 
 import email_icon from "../Assets/email.png";
 import password_icon from "../Assets/password.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Login = () => {
   const { login } = useContext(UserContext);
@@ -79,7 +79,7 @@ const Login = () => {
             src={password_icon}
             alt="password-icon"
           />
-          <div className="password-wrapper">
+          <div className="login-password-wrapper">
             <input
               className="login-input"
               id="password"
@@ -98,9 +98,9 @@ const Login = () => {
             </button>
           </div>
         </div>
-        <div className="auth-action-links">
-          Forgot Password? <span>Click Here!</span>
-        </div>
+        <Link className="auth-action-links" to={"/login/forgot-password"}>
+          Forgot password? <span>Click here!</span>
+        </Link>
         <div className="login-submit-container">
           <button type="submit" className="login-submit">
             Login
