@@ -45,7 +45,7 @@ const BlogList = () => {
       <div className="blog-header">
         <h2>All Posts</h2>
         {currentUser ? (
-          <div>
+          <div className="d-flex gap-2">
             <button
               className="blog-login-btn"
               onClick={() => handleLogoutSubmit()}
@@ -77,11 +77,13 @@ const BlogList = () => {
             <Row className="blog-row">
               <Col sm className="p-2">
                 <div className="blog-img">
-                  {blog.images.length > 0 && (
+                  {blog.images.length > 0 ? (
                     <img
                       src={getBlogImageUrl(blog._id, blog.images[0]._id)}
                       alt={`Thumbnail for ${blog.title} Blog`}
                     />
+                  ) : (
+                    <img src="../Assets/logo1.svg" alt="Playful Pathways Logo"/>
                   )}
                 </div>
               </Col>

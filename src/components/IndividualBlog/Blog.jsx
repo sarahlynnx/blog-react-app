@@ -357,7 +357,9 @@ const Blog = () => {
         handleDeletePost={handleDeletePost}
         handleEditPost={handleEditPost}
       />
-      <SharingIcons />
+      <SharingIcons 
+        title={blogData.title} 
+      />
       <Interactions
         views={blogData.views}
         likes={blogData.likes}
