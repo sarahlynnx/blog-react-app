@@ -10,7 +10,7 @@ const SharingIcons = ({ title}) => {
     <div className="sharing-icons">
       <p>Share this article!</p>
       <a
-        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(titleText)}&url=${encodeURIComponent(postUrl)}`}
+        href={`https://twitter.com/intent/tweet?text=${titleText}&url=${encodeURIComponent(postUrl)}`}
         rel="noopener noreferrer"
         target="_blank"
       >
