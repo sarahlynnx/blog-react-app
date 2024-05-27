@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 const SharingIcons = ({ title}) => {
   const { id } = useParams();
-  const postUrl = `https://sarahlynnx.github.io/Playful-Pathways/blog.html#/blog/${id}`;
+  const postUrl = `https://sarahlynnx.github.io/playful-pathways/blog.html#/blog/${id}`;
   const titleText = encodeURIComponent(`Check out this blog: ${title}`);
   return (
     <div className="sharing-icons">
