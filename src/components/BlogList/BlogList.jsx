@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { getApiUrl, getBlogImageUrl } from "../api";
+import LoadingAnimation from "../LoadingAnimation/LoadingAnimation";
 import { formatDate } from "../DateFormat";
 import { UserContext } from "../userContext";
 import "./bloglist.css";
@@ -10,6 +11,7 @@ import "./bloglist.css";
 const BlogList = () => {
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { currentUser, logout } = useContext(UserContext);
 
   const handleLogoutSubmit = async () => {
@@ -33,8 +35,10 @@ const BlogList = () => {
         }
         const data = await response.json();
         setBlogs(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
+        setLoading(false);
       }
     };
     fetchPosts();
@@ -68,40 +72,51 @@ const BlogList = () => {
         )}
       </div>
       <div className="blog-preview">
-        {blogs.map((blog) => (
-          <Link
-            className="ind-blog-link"
-            to={`/blog/${blog._id}`}
-            key={blog._id}
-          >
-            <Row className="blog-row">
-              <Col sm className="p-2">
-                <div className="blog-img">
-                  {blog.images.length > 0 ? (
-                    <img
-                      src={getBlogImageUrl(blog._id, blog.images[0]._id)}
-                      alt={`Thumbnail for ${blog.title} Blog`}
-                    />
-                  ) : (
-                    <img src="../Assets/logo1.svg" alt="Playful Pathways Logo"/>
-                  )}
-                </div>
-              </Col>
-              <Col sm className="p-2">
-                <div className="blog-info">
-                  <div className="bloglist-blog-header">
-                    <div className="blog-author-date">{blog.author.name}</div>
-                    <div className="blog-author-date">
-                      {formatDate(blog.date)}
+        {loading ? (
+          <LoadingAnimation />
+        ) : (
+          <>
+            {blogs.map((blog) => (
+              <Link
+                className="ind-blog-link"
+                to={`/blog/${blog._id}`}
+                key={blog._id}
+              >
+                <Row className="blog-row">
+                  <Col sm className="p-2">
+                    <div className="blog-img">
+                      {blog.images.length > 0 ? (
+                        <img
+                          src={getBlogImageUrl(blog._id, blog.images[0]._id)}
+                          alt={`Thumbnail for ${blog.title} Blog`}
+                        />
+                      ) : (
+                        <img
+                          src="../Assets/logo1.svg"
+                          alt="Playful Pathways Logo"
+                        />
+                      )}
                     </div>
-                  </div>
-                  <ReactMarkdown>{`## ${blog.title}`}</ReactMarkdown>
-                  <ReactMarkdown>{blog.content}</ReactMarkdown>
-                </div>
-              </Col>
-            </Row>
-          </Link>
-        ))}
+                  </Col>
+                  <Col sm className="p-2">
+                    <div className="blog-info">
+                      <div className="bloglist-blog-header">
+                        <div className="blog-author-date">
+                          {blog.author.name}
+                        </div>
+                        <div className="blog-author-date">
+                          {formatDate(blog.date)}
+                        </div>
+                      </div>
+                      <ReactMarkdown>{`## ${blog.title}`}</ReactMarkdown>
+                      <ReactMarkdown>{blog.content}</ReactMarkdown>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+            ))}
+          </>
+        )}
       </div>
     </Container>
   );
