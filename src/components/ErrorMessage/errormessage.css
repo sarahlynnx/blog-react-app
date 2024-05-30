@@ -17,6 +17,8 @@
     color: #000000;
     padding: 10px;
     cursor: pointer;
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
 .error-message-box {
@@ -34,9 +36,10 @@
     width: 250px;
     height: 50px;
     margin: 10px auto;
-    background-color: rgb(78,38,78);
-    color: #fff;
+    background-color: #fff;
+    color: #000000;
     border-radius: 5px;
+    border: 1px solid black;
   }
 
   .disable-scroll {
