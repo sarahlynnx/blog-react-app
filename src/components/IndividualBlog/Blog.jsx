@@ -3,6 +3,7 @@ import "./blog.css";
 import { useParams, useNavigate } from "react-router-dom";
 import BlogContent from "./BlogContent";
 import SharingIcons from "./SharingIcons";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import Interactions from "./Interactions";
 import CommentsSection from "./CommentsSection";
 import CommentForm from "./CommentForm";
@@ -14,6 +15,7 @@ const Blog = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [comment, setComment] = useState("");
+  const [showErrorMsg, setShowErrorMsg] = useState(false);
   const [blogData, setBlogData] = useState({
     title: "",
     content: "",
@@ -35,7 +37,7 @@ const Blog = () => {
   const handleLike = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please log in to like the post.");
+      setShowErrorMsg(true);
       return;
     }
 
@@ -226,7 +228,7 @@ const Blog = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please log in to submit a comment.");
+      setShowErrorMsg(true);
       return;
     }
     try {
@@ -347,6 +349,7 @@ const Blog = () => {
   };
 
   return (
+    <>
     <div className="blog-container">
       <BlogContent
         title={blogData.title}
@@ -377,6 +380,13 @@ const Blog = () => {
         setComment={setComment}
       />
     </div>
+    {showErrorMsg && (
+        <ErrorMessage
+          message="Please log in to like or comment on this post."
+          onClose={() => setShowErrorMsg(false)}
+        />
+      )}
+    </>
   );
 };
 
