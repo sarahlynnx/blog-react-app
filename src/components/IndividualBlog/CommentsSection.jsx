@@ -2,7 +2,14 @@ import React, { useState, useContext } from "react";
 import { UserContext } from "../userContext";
 import { formatDate } from "../DateFormat";
 
-const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
+const CommentsSection = ({
+  comments,
+  handleDelete,
+  handleEdit,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+}) => {
   const { currentUser } = useContext(UserContext);
   const [commentId, setCommentId] = useState(null);
   const [commentContent, setCommentContent] = useState("");
@@ -36,14 +43,14 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
                 {currentUser && comment.author._id === currentUser.id && (
                   <>
                     {commentId === comment._id ? (
-                      <div>
-                        <button onClick={cancelEdit}>Cancel</button>
+                      <div className="user-comment-buttons cancel">
                         <button onClick={() => saveEdit(comment._id)}>
                           Save
                         </button>
+                        <button onClick={cancelEdit}>Cancel</button>
                       </div>
                     ) : (
-                      <div>
+                      <div className="user-comment-buttons">
                         <button onClick={() => beginEdit(comment)}>Edit</button>
                         <button onClick={() => handleDelete(comment._id)}>
                           Delete
@@ -66,6 +73,25 @@ const CommentsSection = ({ comments, handleDelete, handleEdit }) => {
           </li>
         ))}
       </ul>
+      {totalPages > 1 && (
+        <div className="control-pagination my-2">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+          <span className="mx-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

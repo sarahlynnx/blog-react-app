@@ -24,9 +24,11 @@ const Blog = () => {
     views: 0,
     author: {},
     date: "",
-    comments: [],
     likedByUser: false,
   });
+  const [comments, setComments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const clearTokenAndRedirect = () => {
     localStorage.removeItem("token");
@@ -90,12 +92,10 @@ const Blog = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setBlogData((prevData) => ({
-          ...prevData,
-          comments: prevData.comments.filter(
-            (comment) => comment._id !== commentId
-          ),
-        }));
+        const commentsData = await fetchComments();
+        setComments(commentsData.comments);
+        setCurrentPage(commentsData.currentPage);
+        setTotalPages(commentsData.totalPages);
         alert(data.msg);
       } else {
         if (response.status === 401) {
@@ -165,14 +165,13 @@ const Blog = () => {
         body: JSON.stringify({ content: updatedContent }),
       });
       if (response.ok) {
-        setBlogData((prevData) => ({
-          ...prevData,
-          comments: prevData.comments.map((comment) =>
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
             comment._id === commentId
               ? { ...comment, content: updatedContent }
               : comment
-          ),
-        }));
+          )
+        );
       } else {
         if (response.status === 401) {
           alert("Session has expired, please log in again.");
@@ -242,11 +241,10 @@ const Blog = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
-        setBlogData((prevData) => ({
-          ...prevData,
-          comments: [...prevData.comments, data.comment],
-        }));
+        const commentsData = await fetchComments(id, currentPage);
+        setComments(commentsData.comments);
+        setCurrentPage(commentsData.currentPage);
+        setTotalPages(commentsData.totalPages);
         setComment("");
       } else {
         if (response.status === 401) {
@@ -267,11 +265,8 @@ const Blog = () => {
   // Fetch Post Data on mount
   useEffect(() => {
     const fetchBlogData = async () => {
-      console.log(`Component mounted or id changed: ${id}`);
       try {
-        console.log(`Fetching post data for ID: ${id}`);
         const post = await fetchPost(id);
-        const comments = await fetchComments(id);
         const images = await fetchImages(id, post.images);
         const likedByUser = currentUser
           ? post.likedBy.includes(currentUser.id)
@@ -284,7 +279,6 @@ const Blog = () => {
           views: post.views,
           author: post.author,
           date: post.date,
-          comments: comments,
           likedByUser: likedByUser,
         });
       } catch (error) {
@@ -309,18 +303,41 @@ const Blog = () => {
     return await response.json();
   };
 
+  useEffect(() => {
+    const fetchCommentsData = async () => {
+      try {
+        const commentsData = await fetchComments();
+        setComments(commentsData.comments);
+        setCurrentPage(commentsData.currentPage);
+        setTotalPages(commentsData.totalPages);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchCommentsData();
+  }, [id, currentPage]);
+
   // Get all comments for individual post
-  const fetchComments = async (postId) => {
-    const response = await fetch(getApiUrl(`/api/comments?postId=${postId}`), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch comments for post ID: ${postId}`);
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(
+        getApiUrl(`/api/comments?postId=${id}&page=${currentPage}&limit=5`),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch comments for post ID: ${id}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      throw error;
     }
-    return await response.json();
   };
 
   // Get all images for individual post
@@ -350,37 +367,38 @@ const Blog = () => {
 
   return (
     <>
-    <div className="blog-container">
-      <BlogContent
-        title={blogData.title}
-        content={blogData.content}
-        images={blogData.images}
-        author={blogData.author}
-        date={blogData.date}
-        handleDeletePost={handleDeletePost}
-        handleEditPost={handleEditPost}
-      />
-      <SharingIcons 
-        title={blogData.title} 
-      />
-      <Interactions
-        views={blogData.views}
-        likes={blogData.likes}
-        onLike={handleLike}
-        likedByUser={blogData.likedByUser}
-      />
-      <CommentsSection
-        comments={blogData.comments}
-        handleDelete={handleDeleteComment}
-        handleEdit={handleEditComment}
-      />
-      <CommentForm
-        handleSubmit={handleSubmitComment}
-        comment={comment}
-        setComment={setComment}
-      />
-    </div>
-    {showErrorMsg && (
+      <div className="blog-container">
+        <BlogContent
+          title={blogData.title}
+          content={blogData.content}
+          images={blogData.images}
+          author={blogData.author}
+          date={blogData.date}
+          handleDeletePost={handleDeletePost}
+          handleEditPost={handleEditPost}
+        />
+        <SharingIcons title={blogData.title} />
+        <Interactions
+          views={blogData.views}
+          likes={blogData.likes}
+          onLike={handleLike}
+          likedByUser={blogData.likedByUser}
+        />
+        <CommentsSection
+          comments={comments}
+          handleDelete={handleDeleteComment}
+          handleEdit={handleEditComment}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+        />
+        <CommentForm
+          handleSubmit={handleSubmitComment}
+          comment={comment}
+          setComment={setComment}
+        />
+      </div>
+      {showErrorMsg && (
         <ErrorMessage
           message="Please log in to like or comment on this post."
           onClose={() => setShowErrorMsg(false)}
