@@ -38,12 +38,12 @@ const BlogContent = ({
   return (
     <Container className="blog-content">
       <div className="individual-blog-header">
-        <div className="d-flex flex-row gap-4">
+        <div className="d-flex flex-row gap-2">
           <div>{author.name}</div>
           <div>{formatDate(date)}</div>
         </div>
         {currentUser && author._id === currentUser.id && (
-          <div>
+          <div className="d-flex gap-2">
             {!editing ? (
               <>
                 <button className="author-blog-btns" onClick={beginEdit}>

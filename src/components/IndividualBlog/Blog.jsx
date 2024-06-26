@@ -15,6 +15,10 @@ const Blog = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalComments, setTotalComments] = useState(0);
   const [showErrorMsg, setShowErrorMsg] = useState(false);
   const [blogData, setBlogData] = useState({
     title: "",
@@ -26,16 +30,79 @@ const Blog = () => {
     date: "",
     likedByUser: false,
   });
-  const [comments, setComments] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
 
   const clearTokenAndRedirect = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // like post
+  // Set post data on mount
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      try {
+        const post = await fetchPost(id);
+        const images = await fetchImages(id, post.images);
+        const likedByUser = currentUser
+          ? post.likedBy.includes(currentUser.id)
+          : false;
+        setBlogData({
+          title: post.title,
+          content: post.content,
+          images: images,
+          likes: post.likes,
+          views: post.views,
+          author: post.author,
+          date: post.date,
+          likedByUser: likedByUser,
+        });
+      } catch (error) {
+        console.error("Error fetching post:", error);
+      }
+    };
+
+    fetchBlogData();
+  }, [id, currentUser]);
+
+  // Get post
+  const fetchPost = async (postId) => {
+    const response = await fetch(getApiUrl(`/api/posts/${postId}`), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch post with ID: ${postId}`);
+    }
+    return await response.json();
+  };
+
+  // Get images for post
+  const fetchImages = async (postId, images) => {
+    const imagesData = await Promise.all(
+      images.map(async (image) => {
+        try {
+          const imageUrl = getBlogImageUrl(postId, image._id);
+          const response = await fetch(imageUrl);
+          if (response.ok) {
+            const imageData = await response.blob();
+            return {
+              ...image,
+              url: URL.createObjectURL(imageData),
+            };
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error("Error fetching image:", error);
+          return null;
+        }
+      })
+    );
+    return imagesData.filter((img) => img !== null);
+  };
+
+  // Like post
   const handleLike = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -75,39 +142,39 @@ const Blog = () => {
     }
   };
 
-  // delete comment
-  const handleDeleteComment = async (commentId) => {
+  // Update post
+  const handleEditPost = async (updatedContent, updatedTitle) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please log in to delete your comment");
+      alert("Please log in to edit the post.");
       return;
     }
     try {
-      const response = await fetch(getApiUrl(`/api/comments/${commentId}`), {
-        method: "DELETE",
+      const response = await fetch(getApiUrl(`/api/posts/${id}`), {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ content: updatedContent, title: updatedTitle }),
       });
-      const data = await response.json();
       if (response.ok) {
-        const commentsData = await fetchComments();
-        setComments(commentsData.comments);
-        setCurrentPage(commentsData.currentPage);
-        setTotalPages(commentsData.totalPages);
-        alert(data.msg);
+        setBlogData((prevData) => ({
+          ...prevData,
+          title: updatedTitle,
+          content: updatedContent,
+        }));
       } else {
         if (response.status === 401) {
           alert("Session has expired, please log in again.");
           clearTokenAndRedirect();
         } else {
-          throw new Error("Failed to delete comment");
+          throw new Error("Failed to update post");
         }
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while deleting the comment. Please try again.");
+      alert("An error occured while updating the post. Please try again.");
     }
   };
 
@@ -148,7 +215,86 @@ const Blog = () => {
     }
   };
 
-  // Edit comment
+  // Set comment data on mount
+  useEffect(() => {
+    const setCommentsData = async () => {
+      try {
+        const commentsData = await fetchComments(id, currentPage);
+        setComments(commentsData.comments);
+        setTotalPages(commentsData.totalPages);
+        setTotalComments(commentsData.totalComments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    if (id) {
+      setCommentsData();
+    }
+  }, [id, currentPage]);
+
+  // Get comments for post
+  const fetchComments = async (postId, page = 1, limit = 5) => {
+    try {
+      const response = await fetch(
+        getApiUrl(`/api/comments?postId=${postId}&page=${page}&limit=${limit}`),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch comments for post ID: ${id}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      throw error;
+    }
+  };
+
+  // Post comment
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowErrorMsg(true);
+      return;
+    }
+    try {
+      const response = await fetch(getApiUrl("/api/comments"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: comment, postId: id }),
+      });
+      if (response.ok) {
+        const commentsData = await fetchComments(id, currentPage);
+        setComments(commentsData.comments);
+        setTotalPages(commentsData.totalPages);
+        setTotalComments(commentsData.totalComments);
+        setComment("");
+      } else {
+        if (response.status === 401) {
+          alert("Session has expired, please log in again.");
+          clearTokenAndRedirect();
+        } else {
+          throw new Error("Failed to submit comment");
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error.message);
+      alert(
+        "An error occurred while submitting the comment. Please try again."
+      );
+    }
+  };
+
+  // Update comment
   const handleEditComment = async (commentId, updatedContent) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -186,183 +332,40 @@ const Blog = () => {
     }
   };
 
-  // // Edit post
-  const handleEditPost = async (updatedContent, updatedTitle) => {
+  // Delete comment
+  const handleDeleteComment = async (commentId) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please log in to edit the post.");
+      alert("Please log in to delete your comment");
       return;
     }
     try {
-      const response = await fetch(getApiUrl(`/api/posts/${id}`), {
-        method: "PUT",
+      const response = await fetch(getApiUrl(`/api/comments/${commentId}`), {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ content: updatedContent, title: updatedTitle }),
-      });
-      if (response.ok) {
-        setBlogData((prevData) => ({
-          ...prevData,
-          title: updatedTitle,
-          content: updatedContent,
-        }));
-      } else {
-        if (response.status === 401) {
-          alert("Session has expired, please log in again.");
-          clearTokenAndRedirect();
-        } else {
-          throw new Error("Failed to update post");
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      alert("An error occured while updating the post. Please try again.");
-    }
-  };
-
-  // Post comment
-  const handleSubmitComment = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setShowErrorMsg(true);
-      return;
-    }
-    try {
-      const response = await fetch(getApiUrl("/api/comments"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: comment, postId: id }),
       });
       const data = await response.json();
       if (response.ok) {
         const commentsData = await fetchComments(id, currentPage);
         setComments(commentsData.comments);
-        setCurrentPage(commentsData.currentPage);
         setTotalPages(commentsData.totalPages);
-        setComment("");
+        setTotalComments(commentsData.totalComments);
+        alert(data.msg);
       } else {
         if (response.status === 401) {
           alert("Session has expired, please log in again.");
           clearTokenAndRedirect();
         } else {
-          throw new Error("Failed to submit comment");
+          throw new Error("Failed to delete comment");
         }
       }
     } catch (error) {
-      console.error("Error submitting comment:", error.message);
-      alert(
-        "An error occurred while submitting the comment. Please try again."
-      );
+      console.error(error);
+      alert("An error occurred while deleting the comment. Please try again.");
     }
-  };
-
-  // Fetch Post Data on mount
-  useEffect(() => {
-    const fetchBlogData = async () => {
-      try {
-        const post = await fetchPost(id);
-        const images = await fetchImages(id, post.images);
-        const likedByUser = currentUser
-          ? post.likedBy.includes(currentUser.id)
-          : false;
-        setBlogData({
-          title: post.title,
-          content: post.content,
-          images: images,
-          likes: post.likes,
-          views: post.views,
-          author: post.author,
-          date: post.date,
-          likedByUser: likedByUser,
-        });
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      }
-    };
-
-    fetchBlogData();
-  }, [id, currentUser]);
-
-  // Get Individual Post
-  const fetchPost = async (postId) => {
-    const response = await fetch(getApiUrl(`/api/posts/${postId}`), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch post with ID: ${postId}`);
-    }
-    return await response.json();
-  };
-
-  useEffect(() => {
-    const fetchCommentsData = async () => {
-      try {
-        const commentsData = await fetchComments();
-        setComments(commentsData.comments);
-        setCurrentPage(commentsData.currentPage);
-        setTotalPages(commentsData.totalPages);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    fetchCommentsData();
-  }, [id, currentPage]);
-
-  // Get all comments for individual post
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(
-        getApiUrl(`/api/comments?postId=${id}&page=${currentPage}&limit=5`),
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch comments for post ID: ${id}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-      throw error;
-    }
-  };
-
-  // Get all images for individual post
-  const fetchImages = async (postId, images) => {
-    const imagesData = await Promise.all(
-      images.map(async (image) => {
-        try {
-          const imageUrl = getBlogImageUrl(postId, image._id);
-          const response = await fetch(imageUrl);
-          if (response.ok) {
-            const imageData = await response.blob();
-            return {
-              ...image,
-              url: URL.createObjectURL(imageData),
-            };
-          } else {
-            return null;
-          }
-        } catch (error) {
-          console.error("Error fetching image:", error);
-          return null;
-        }
-      })
-    );
-    return imagesData.filter((img) => img !== null);
   };
 
   return (
@@ -391,6 +394,7 @@ const Blog = () => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
+          totalComments={totalComments}
         />
         <CommentForm
           handleSubmit={handleSubmitComment}

@@ -27,9 +27,9 @@
     max-width: 100%;
 }
 .author-blog-btns {
-    width: 50px;
     background: none;
-    border: none;
+    border: 1px solid black;
+    padding: 0px 2px;
 }
 
 .individual-blog-header {
@@ -37,7 +37,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 2px;
     margin: auto auto 40px;
 }
 
@@ -63,7 +62,7 @@
     font-size: 20px;
     width: 80%;
     margin: 2rem auto 0;
-    padding: 1rem;
+    padding: 1rem 0;
     cursor: pointer;
 }
 
@@ -108,30 +107,39 @@
 }
 
 .comments-section li {
-    margin: 1rem 0;
-    padding: 10px;
+    padding: 10px 0px;
     border-bottom: 1px solid #6b6a6a;
 }
 
 .comment-header {
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
-   align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .comment-content {
     text-align: left;
+    font-size: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.385);
+    padding: 5px;
+}
+
+.control-pagination {
+    text-align: center;
 }
 
 .user-comment-buttons {
     display: flex;
-    justify-content: space-between;
-    width: 110px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
 }
 
-.cancel {
-    width: 120px;
+.comments-btn {
+    padding: 0px 2px;
+    border: 1px solid black;
 }
 
 .comment-form {

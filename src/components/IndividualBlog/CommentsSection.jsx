@@ -9,6 +9,7 @@ const CommentsSection = ({
   currentPage,
   setCurrentPage,
   totalPages,
+  totalComments,
 }) => {
   const { currentUser } = useContext(UserContext);
   const [commentId, setCommentId] = useState(null);
@@ -30,36 +31,47 @@ const CommentsSection = ({
   };
   return (
     <div className="comments-section">
-      <h2>Comments</h2>
+      <h2>{totalComments} Comments</h2>
       <ul>
         {comments.map((comment) => (
           <li key={comment._id}>
             <div className="comment-item d-flex flex-column">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <div className="comment-header" style={{ width: "250px" }}>
-                  <strong>{comment.author.name}</strong>
-                  {formatDate(comment.createdAt)}
-                </div>
-                {currentUser && comment.author._id === currentUser.id && (
-                  <>
-                    {commentId === comment._id ? (
-                      <div className="user-comment-buttons cancel">
-                        <button onClick={() => saveEdit(comment._id)}>
-                          Save
-                        </button>
-                        <button onClick={cancelEdit}>Cancel</button>
-                      </div>
-                    ) : (
-                      <div className="user-comment-buttons">
-                        <button onClick={() => beginEdit(comment)}>Edit</button>
-                        <button onClick={() => handleDelete(comment._id)}>
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
+              <div className="comment-header">
+                <strong>{comment.author.name}</strong>
+                {formatDate(comment.createdAt)}
               </div>
+              {currentUser && comment.author._id === currentUser.id && (
+                <>
+                  {commentId === comment._id ? (
+                    <div className="user-comment-buttons">
+                      <button
+                        className="comments-btn"
+                        onClick={() => saveEdit(comment._id)}
+                      >
+                        Save
+                      </button>
+                      <button className="comments-btn" onClick={cancelEdit}>
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="user-comment-buttons">
+                      <button
+                        className="comments-btn"
+                        onClick={() => beginEdit(comment)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="comments-btn"
+                        onClick={() => handleDelete(comment._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
               {commentId === comment._id ? (
                 <input
                   type="text"
@@ -76,6 +88,7 @@ const CommentsSection = ({
       {totalPages > 1 && (
         <div className="control-pagination my-2">
           <button
+            className="comments-btn"
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -85,6 +98,7 @@ const CommentsSection = ({
             Page {currentPage} of {totalPages}
           </span>
           <button
+            className="comments-btn"
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
