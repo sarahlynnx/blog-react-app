@@ -57,10 +57,20 @@
   }
   
   .blog-info {
-    margin: auto;
     max-width: 350px;
     min-width: 250px;
     text-align: left;
+    height: 100%;
+  }
+
+  .bloglist-markdown {
+    min-height: 250px;
+  }
+
+  @media screen and (max-width: 575px) {
+    .bloglist-markdown {
+      min-height: unset;
+    }    
   }
 
   .bloglist-blog-header {

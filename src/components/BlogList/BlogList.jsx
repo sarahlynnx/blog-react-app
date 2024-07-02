@@ -108,8 +108,17 @@ const BlogList = () => {
                           {formatDate(blog.date)}
                         </div>
                       </div>
-                      <ReactMarkdown>{`## ${blog.title}`}</ReactMarkdown>
-                      <ReactMarkdown>{blog.content}</ReactMarkdown>
+                      <div className="bloglist-markdown">
+                        <ReactMarkdown>{`### ${blog.title}`}</ReactMarkdown>
+                        <ReactMarkdown>{blog.content}</ReactMarkdown>
+                      </div>
+                      <div>
+                        <div style={{ borderBottom: "1px solid black" }}></div>
+                        <div className="d-flex flex-row gap-3 mt-1">
+                          <div>{blog.views} views</div>
+                          <div>{blog.totalComments} comments</div>
+                        </div>
+                      </div>
                     </div>
                   </Col>
                 </Row>
